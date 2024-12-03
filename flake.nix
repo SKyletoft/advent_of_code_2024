@@ -33,8 +33,11 @@
 			in {
 				devShells.default = pkgs.mkShell {
 					nativeBuildInputs =
-						[( pkgs.dyalog.override { acceptLicense = true; } )
-						 ( apl-readline.outputs.packages.${system}.default )]
+						[
+							(pkgs.dyalog.override { acceptLicense = true; })
+							apl-readline.outputs.packages.${system}.default
+							pkgs.hyperfine
+						]
 						++ rust-packages
 						++ haskell-packages;
 				};
