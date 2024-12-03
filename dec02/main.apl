@@ -1,5 +1,5 @@
-⍝ data ← ⊃⎕NGET'input.txt'1
-data ← ⊃ ⎕NGET 'input.txt'1
+data ← ⊃⎕NGET'input.txt'1
+⍝ data ← ⊃ ⎕NGET 'example.txt'1
 input ← ⍎¨data
 
 per_line ← {{ (∧/⍵∊¯1 ¯2 ¯3)∨(∧/⍵∊1 2 3) } ((⍴⍵)-1)↑⍵-1⌽⍵}
