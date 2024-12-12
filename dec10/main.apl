@@ -1,26 +1,15 @@
-⍝ data ← ↑⍎¨⎕SH'sed "s/[[:digit:]]/\\0 /g" example.txt'
-⍝ data ← ↑⍎¨⎕SH'sed "s/[[:digit:]]/\\0 /g" example2.txt'
-⍝ data ← ↑⍎¨⎕SH'sed "s/[[:digit:]]/\\0 /g" example3.txt'
-data ← ↑⍎¨⎕SH'sed "s/[[:digit:]]/\\0 /g" input.txt'
+#!/usr/bin/env dyalogscript
 
-ac   ← {((⊃⍴⍵)/0),↑¯1↓¨↓⍵}
-c2m  ← {⍺{⍺⍴((⍵-1)/0),1,((×/⍺)-⍵)/0}(2⌷⍵)+(⊃⍺×(⊃⍵)-1)}
+⍝ input ← ↑⍎¨⎕SH'sed "s/[[:digit:]]/\\0 /g" example.txt'
+⍝ input ← ↑⍎¨⎕SH'sed "s/[[:digit:]]/\\0 /g" example2.txt'
+⍝ input ← ↑⍎¨⎕SH'sed "s/[[:digit:]]/\\0 /g" example3.txt'
+input ← ↑⍎¨⎕SH'sed "s/[[:digit:]]/\\0 /g" input.txt'
 
-⍝ Part 1 uses ∨ and ∧ while part 2 uses + and ×:
+ac    ← {↑0,¨¯1↓¨↓⍵}
+c2m   ← {⍺⍴(((2⌷⍵+⊃⍺×(⍵-1))-1)/0),1,(×/⍺)/0}
+blur  ← {↑+/(ac⍵) (⌽ac⌽⍵) (⍉ac⍉⍵) (⍉⌽ac⌽⍉⍵)}
+find  ← {{⍺×blur⍵}/({⍵=input}¨⌽⍳9),⊂⍵}
+paths ← ∊{find (⍴input) c2m ⍵}¨(∊0=input)/(↑,/↓⍳⍴input)
 
-part1 ← {
-	data ← ⍵
-	blur ← {↑∨/(ac⍵) (⌽ac⌽⍵) (⍉ac⍉⍵) (⍉⌽ac⌽⍉⍵)}
-	find ← {{⍺∧blur⍵}/({⍵=data}¨⌽⍳9),⊂⍵}
-	+/{+/∊find (⍴data) c2m ⍵}¨(∊0=data)/(↑,/↓⍳⍴data)
-}
-
-part2 ← {
-	data ← ⍵
-	blur ← {↑+/(ac⍵) (⌽ac⌽⍵) (⍉ac⍉⍵) (⍉⌽ac⌽⍉⍵)}
-	find ← {{⍺×blur⍵}/({⍵=data}¨⌽⍳9),⊂⍵}
-	+/{+/∊find (⍴data) c2m ⍵}¨(∊0=data)/(↑,/↓⍳⍴data)
-}
-
-]DISPLAY part1 data
-]DISPLAY part2 data
+⎕← part1 ← +/0≠paths
+⎕← part2 ← +/paths
