@@ -1,3 +1,6 @@
 .envrc
 **/target
 **/input.txt
+**/Main$
+**/*.o
+**/*.hi
