@@ -12,7 +12,7 @@ split_ ← {
 	⍺=0:⍬
 	map    ← ⍵
 	expand ← {map∧⍵∨↑∨/borders⍵}
-	new    ← (expand⍣(+/∊map)){{(⍴map) c2m ⍵}⊃(∊⍵)/↑,/↓⍳⍴⍵}map
+	new    ← (expand⍣≡){{(⍴map) c2m ⍵}⊃(∊⍵)/↑,/↓⍳⍴⍵}map
 	(⊂new),((⍺-+/∊new)∇(⍵∧~new))
 }
 split ← {(+/∊⍵)split_⍵}
