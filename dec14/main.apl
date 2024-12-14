@@ -5,7 +5,7 @@ file ← 'input.txt'⋄size←101 103
 input ← ⍎¨⊃⎕NGET 'formatted.txt'1
 
 c2m ← {w h←⍺⋄y x←⍵⋄⍺⍴(((x+h×(y-1))-1)/0),1,((×/⍺)/0)}
-per_robot ← {p v←⍵⋄size|(200×size)+p+⍺×v}
+per_robot ← {p v←⍵⋄size|p+⍺×v}
 
 state_at ← {
 	m←⍉↑+/{size c2m (1 1)+⍵}¨(⍺ per_robot {2⍴↓1 2 2⍴⍵})¨⍵

@@ -1,6 +1,8 @@
 .envrc
 **/target
 **/input.txt
+dec14/formatted.txt
+dec14/output.txt
 **/Main$
 **/*.o
 **/*.hi
