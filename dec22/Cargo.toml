@@ -1,0 +1,7 @@
+[package]
+name = "dec22"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+smallvec = { version ="1.13.2", features = ["union"] }
