@@ -1,11 +1,11 @@
-use std::collections::{BTreeSet, HashSet};
+use std::collections::{HashMap, HashSet};
+
+use itertools::Itertools;
 
 const FILE: &str = "../input.txt";
 // const FILE: &str = "../example.txt";
 // const FILE: &str = "../example2.txt";
 // const FILE: &str = "../example3.txt";
-
-type SmallVec = smallvec::SmallVec<[i64; 4]>;
 
 fn main() {
 	let input = std::fs::read_to_string(FILE)
@@ -15,25 +15,9 @@ fn main() {
 		.collect::<Vec<i64>>();
 
 	let result1 = part1(&input);
-
 	let result2 = part2(&input);
 
 	println!("Part1: {result1}\nPart2: {result2}");
-}
-
-fn part1(input: &[i64]) -> i64 {
-	input
-		.iter()
-		.copied()
-		.map(|n| repeat(step, 2000, n))
-		.sum::<i64>()
-}
-
-fn repeat(f: impl Fn(i64) -> i64, n: i64, mut input: i64) -> i64 {
-	for _ in 0..n {
-		input = f(input);
-	}
-	input
 }
 
 fn step(mut s: i64) -> i64 {
@@ -43,56 +27,44 @@ fn step(mut s: i64) -> i64 {
 	s
 }
 
+fn part1(input: &[i64]) -> i64 {
+	input
+		.iter()
+		.copied()
+		.map(|n| {
+			let mut input = n;
+			for _ in 0..2000 {
+				input = step(input);
+			}
+			input
+		})
+		.sum::<i64>()
+}
+
 fn part2(input: &[i64]) -> i64 {
-	let sequences = input
-		.iter()
-		.copied()
-		.map(|mut n| {
-			std::iter::from_fn(|| {
-				let last = n % 10;
-				n = step(n);
-				let this = n % 10;
-				Some(this - last)
-			})
-			.take(2000)
-			.collect::<Vec<_>>()
-		})
-		.collect::<Vec<_>>();
-	let numbers = input
-		.iter()
-		.copied()
-		.map(|mut n| {
-			std::iter::once(n)
-				.chain(std::iter::from_fn(|| {
-					n = step(n);
-					Some(n)
-				}))
-				.take(2000)
-				.collect::<Vec<_>>()
-		})
-		.collect::<Vec<_>>();
-	let subsequences = sequences
-		.iter()
-		.flat_map(|seq| seq.windows(4).map(SmallVec::from_slice))
-		.collect::<BTreeSet<SmallVec>>();
+	let mut subsequence_values = HashMap::new();
 
-	let res = subsequences
-		.iter()
-		.map(|subseq| {
-			sequences
-				.iter()
-				.enumerate()
-				.map(|(i, seq)| {
-					seq.windows(4)
-						.map(SmallVec::from_slice)
-						.position(|sv| &sv == subseq)
-						.map(|j| *numbers[i].get(j + 4).unwrap_or(&0) % 10)
-						.unwrap_or(0)
-				})
-				.sum::<i64>()
+	for seq in input.iter().copied().map(|mut n| {
+		std::iter::from_fn(move || {
+			let last = n % 10;
+			n = step(n);
+			let this = n % 10;
+			Some((this, (this - last) as u8))
 		})
-		.max()
-		.unwrap_or(0);
+		.take(2000)
+	}) {
+		let mut seen = HashSet::new();
+		for (num, pattern) in seq
+			.tuple_windows()
+			.map(|((_, a), (_, b), (_, c), (n, d))| (n, i32::from_be_bytes([a, b, c, d])))
+		{
+			if seen.contains(&pattern) {
+				continue;
+			}
+			seen.insert(pattern);
+			*subsequence_values.entry(pattern).or_insert(0) += num;
+		}
+	}
 
-	res
+	subsequence_values.values().copied().max().unwrap_or(0)
 }
