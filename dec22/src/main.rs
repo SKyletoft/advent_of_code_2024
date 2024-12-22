@@ -21,7 +21,7 @@ fn main() {
 	println!("Part1: {result1}\nPart2: {result2}");
 }
 
-fn part1(input: &Vec<i64>) -> i64 {
+fn part1(input: &[i64]) -> i64 {
 	input
 		.iter()
 		.copied()
@@ -58,6 +58,19 @@ fn part2(input: &[i64]) -> i64 {
 			.collect::<Vec<_>>()
 		})
 		.collect::<Vec<_>>();
+	let numbers = input
+		.iter()
+		.copied()
+		.map(|mut n| {
+			std::iter::once(n)
+				.chain(std::iter::from_fn(|| {
+					n = step(n);
+					Some(n)
+				}))
+				.take(2000)
+				.collect::<Vec<_>>()
+		})
+		.collect::<Vec<_>>();
 	let subsequences = sequences
 		.iter()
 		.flat_map(|seq| seq.windows(4).map(SmallVec::from_slice))
@@ -68,12 +81,12 @@ fn part2(input: &[i64]) -> i64 {
 		.map(|subseq| {
 			sequences
 				.iter()
-				.zip(input.iter())
-				.map(|(seq, secret)| {
+				.enumerate()
+				.map(|(i, seq)| {
 					seq.windows(4)
 						.map(SmallVec::from_slice)
 						.position(|sv| &sv == subseq)
-						.map(|idx| repeat(step, (idx + 4) as _, *secret) % 10)
+						.map(|j| *numbers[i].get(j + 4).unwrap_or(&0) % 10)
 						.unwrap_or(0)
 				})
 				.sum::<i64>()
