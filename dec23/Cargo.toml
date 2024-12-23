@@ -1,0 +1,7 @@
+[package]
+name = "dec23"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+smallstr = { version ="0.3", features = ["union"] }
